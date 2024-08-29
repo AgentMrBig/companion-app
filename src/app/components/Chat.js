@@ -1,10 +1,17 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 
 const Chat = () => {
   const [messages, setMessages] = useState([]);
   const [input, setInput] = useState('');
+  const messagesEndRef = useRef(null);
+
+  const scrollToBottom = () => {
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  };
+
+  useEffect(scrollToBottom, [messages]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -16,8 +23,10 @@ const Chat = () => {
 
     // Here you would typically send a request to your AI backend
     // For now, we'll just echo the message back
-    const botMessage = { role: 'assistant', content: `You said: ${input}` };
-    setMessages(prevMessages => [...prevMessages, botMessage]);
+    setTimeout(() => {
+      const botMessage = { role: 'assistant', content: `You said: ${input}` };
+      setMessages(prevMessages => [...prevMessages, botMessage]);
+    }, 500); // Simulate a delay
   };
 
   return (
@@ -30,6 +39,7 @@ const Chat = () => {
             {message.content}
           </div>
         ))}
+        <div ref={messagesEndRef} />
       </div>
       <form onSubmit={handleSubmit} className="p-4 border-t">
         <div className="flex space-x-2">
